@@ -1,5 +1,8 @@
 package com;
 
+import java.util.Objects;
+
+
 public class Book {
     private final String id;
     private String title;
@@ -7,43 +10,45 @@ public class Book {
     private boolean isAvailable;
 
     public Book(String id, String title, String author) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
+        if (id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("Book ID cannot be null or empty.");
+        }
+        this.id = id.trim();
+        this.title = (title != null && !title.trim().isEmpty()) ? title.trim() : "Untitled";
+        this.author = (author != null && !author.trim().isEmpty()) ? author.trim() : "Unknown Author";
         this.isAvailable = true;
     }
 
-    public String getId() {
-        return id;
+    public String getId() { return id; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { 
+        if (title != null && !title.trim().isEmpty()) this.title = title.trim(); 
+    }
+    
+    public String getAuthor() { return author; }
+    public void setAuthor(String author) { 
+        if (author != null && !author.trim().isEmpty()) this.author = author.trim(); 
+    }
+    
+    public boolean isAvailable() { return isAvailable; }
+    public void setAvailable(boolean available) { isAvailable = available; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return Objects.equals(id, book.id);
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
-    public void setAvailable(boolean available) {
-        this.isAvailable = available;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return String.format("ID: "+id +"| Title: "+title +" | Author: "+ author +" | Status: %s ",
-                (isAvailable ? "Available" : "Borrowed"));
+        return String.format("Book [ID: %s | Title: %s | Author: %s | Status: %s]",
+                id, title, author, isAvailable ? "Available" : "Checked Out");
     }
 }
